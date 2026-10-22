@@ -2,7 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 
 export default async function Dashboard() {
-  const [unread, messages, products, resources] = await Promise.all([
+  const [openOrders, unread, messages, products, resources] = await Promise.all([
+    prisma.order.count({ where: { status: "paid" } }),
     prisma.contactMessage.count({ where: { read: false } }),
     prisma.contactMessage.count(),
     prisma.product.count(),
@@ -10,6 +11,7 @@ export default async function Dashboard() {
   ]);
 
   const cards = [
+    { href: "/admin/orders", label: "Orders to fulfill", value: openOrders, sub: "Paid, not yet shipped" },
     { href: "/admin/messages", label: "Unread messages", value: unread, sub: `${messages} total` },
     { href: "/admin/products", label: "Products", value: products, sub: "In the storefront" },
     { href: "/admin/resources", label: "Resources", value: resources, sub: "In the resource library" },
@@ -18,7 +20,7 @@ export default async function Dashboard() {
   return (
     <>
       <h1 className="text-3xl font-semibold mb-8">Dashboard</h1>
-      <div className="grid sm:grid-cols-3 gap-5">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {cards.map((c) => (
           <Link key={c.href} href={c.href} className="bg-card border border-border rounded-xl p-6 hover:border-secondary/50 transition-colors">
             <p className="text-sm text-muted-foreground">{c.label}</p>

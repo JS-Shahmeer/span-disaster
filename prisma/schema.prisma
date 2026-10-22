@@ -72,3 +72,39 @@ model AdminUser {
   passwordHash String
   createdAt    DateTime @default(now())
 }
+
+model Order {
+  id                    String      @id @default(cuid())
+  stripeSessionId       String      @unique
+  stripePaymentIntentId String?
+  email                 String
+  name                  String?
+  phone                 String?
+  // paid -> fulfilled; or cancelled / refunded
+  status                String      @default("paid")
+  currency              String      @default("usd")
+  amountSubtotal        Int
+  amountShipping        Int         @default(0)
+  amountTax             Int         @default(0)
+  amountTotal           Int
+  shippingAddress       Json?
+  notes                 String?
+  items                 OrderItem[]
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String?
+  slug       String
+  name       String
+  unitAmount Int
+  quantity   Int
+
+  @@index([orderId])
+}
