@@ -6,6 +6,7 @@ export const revalidate = 300;
 export const metadata = {
   title: "Resources",
   description: "Free preparedness handouts, graphics, videos, and materials from SPAN.",
+  alternates: { canonical: "/resources" },
 };
 
 export default async function Page() {

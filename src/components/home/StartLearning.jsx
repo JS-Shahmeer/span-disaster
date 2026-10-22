@@ -42,7 +42,7 @@ export default function StartLearning() {
               A structured process for organizing 15–20 households into a response team. Five
               meetings move your neighborhood from learning to a full functional drill.
             </p>
-            <span className="inline-flex items-center gap-2 text-sm font-semibold text-secondary group-hover:gap-3 transition-all">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-accent group-hover:gap-3 transition-all">
               Explore the five meetings
               <ArrowRight className="h-4 w-4" />
             </span>

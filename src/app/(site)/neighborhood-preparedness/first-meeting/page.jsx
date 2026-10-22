@@ -1,10 +1,31 @@
 import FirstMeeting from "@/views/neighborhood/FirstMeeting";
+import JsonLd from "@/components/JsonLd";
+import { getMeetingBySlug } from "@/data/meetings";
+import { articleJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+
+const meeting = getMeetingBySlug("first-meeting");
+const path = "/neighborhood-preparedness/first-meeting";
 
 export const metadata = {
-  title: "First Meeting: The 9-Step Response Plan",
-  description: "Start your neighborhood response team with the 9-Step Response Plan and the Four Disaster Response Teams.",
+  title: meeting.title,
+  description: meeting.description,
+  alternates: { canonical: path },
 };
 
 export default function Page() {
-  return <FirstMeeting />;
+  return (
+    <>
+      <JsonLd
+        data={[
+          articleJsonLd({ title: meeting.title, description: meeting.description, path, section: "Neighborhood Preparedness" }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Neighborhood Preparedness", path: "/neighborhood-preparedness" },
+            { name: meeting.title, path },
+          ]),
+        ]}
+      />
+      <FirstMeeting />
+    </>
+  );
 }
