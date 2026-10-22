@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Mail, CheckCircle, AlertCircle, Send } from "lucide-react";
 import SectionHeading from "@/components/shared/SectionHeading";
+import { submitContact } from "@/app/actions/contact";
 
 const inquiryTypes = [
   "General program inquiry",
@@ -12,10 +13,11 @@ const inquiryTypes = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", inquiryType: inquiryTypes[0], message: "" });
+  const [form, setForm] = useState({ name: "", email: "", inquiryType: inquiryTypes[0], message: "", company: "" });
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const validate = () => {
     const e = {};
@@ -27,16 +29,15 @@ export default function Contact() {
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
-    // NOTE: The recipient email address is configurable and should be set
-    // before this form sends real messages. This simulates a successful submission.
-    setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-    }, 800);
+    setSubmitError("");
+    const result = await submitContact(form).catch(() => ({ ok: false, error: "Something went wrong. Please try again." }));
+    setSubmitting(false);
+    if (result.ok) setSubmitted(true);
+    else setSubmitError(result.error);
   };
 
   const handleChange = (field) => (ev) => {
@@ -56,7 +57,7 @@ export default function Contact() {
             Your message has been received. We appreciate your interest in SPAN Disaster Services.
           </p>
           <button
-            onClick={() => { setSubmitted(false); setForm({ name: "", email: "", inquiryType: inquiryTypes[0], message: "" }); }}
+            onClick={() => { setSubmitted(false); setForm({ name: "", email: "", inquiryType: inquiryTypes[0], message: "", company: "" }); }}
             className="mt-8 inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md text-base font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[48px]"
           >
             Send another message
@@ -162,6 +163,18 @@ export default function Contact() {
                     </p>
                   )}
                 </div>
+
+                <div aria-hidden="true" className="hidden">
+                  <label htmlFor="company">Company</label>
+                  <input id="company" type="text" tabIndex={-1} autoComplete="off" value={form.company} onChange={handleChange("company")} />
+                </div>
+
+                {submitError && (
+                  <p role="alert" className="text-sm text-destructive flex items-center gap-1.5">
+                    <AlertCircle className="h-4 w-4" />
+                    {submitError}
+                  </p>
+                )}
 
                 <button
                   type="submit"
