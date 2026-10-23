@@ -96,19 +96,19 @@ export default function PersonalPreparedness() {
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="order-2 lg:order-1">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="font-mono text-sm font-semibold text-secondary">Activity 12</span>
+                  <span className="font-mono text-sm font-semibold text-accent">Activity 12</span>
                   <span className="h-px w-8 bg-secondary" />
                   <span className="text-xs font-mono uppercase tracking-wider text-primary-foreground/60">Next Step</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-semibold mb-3">{last.title}</h2>
                 <p className="text-primary-foreground/70 leading-relaxed mb-5">{last.summary}</p>
-                <span className="inline-flex items-center gap-2 text-base font-semibold text-secondary group-hover:gap-3 transition-all">
+                <span className="inline-flex items-center gap-2 text-base font-semibold text-accent group-hover:gap-3 transition-all">
                   Complete the journey
                   <ArrowRight className="h-5 w-5" />
                 </span>
               </div>
               <div className="order-1 lg:order-2 aspect-[16/10] lg:aspect-[4/3] rounded-2xl bg-primary-foreground/10 flex items-center justify-center">
-                <LastIcon className="h-20 w-20 text-secondary/60" />
+                <LastIcon className="h-20 w-20 text-accent/60" />
               </div>
             </div>
           </Link>

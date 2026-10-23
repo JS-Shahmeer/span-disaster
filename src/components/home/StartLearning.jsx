@@ -34,7 +34,7 @@ export default function StartLearning() {
             href="/neighborhood-preparedness"
             className="group bg-primary text-primary-foreground rounded-2xl p-8 hover:shadow-lg transition-all focus-ring"
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/15 text-secondary mb-5">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent/15 text-accent mb-5">
               <Users className="h-7 w-7" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Neighborhood Preparedness</h3>
@@ -42,7 +42,7 @@ export default function StartLearning() {
               A structured process for organizing 15–20 households into a response team. Five
               meetings move your neighborhood from learning to a full functional drill.
             </p>
-            <span className="inline-flex items-center gap-2 text-sm font-semibold text-secondary group-hover:gap-3 transition-all">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-accent group-hover:gap-3 transition-all">
               Explore the five meetings
               <ArrowRight className="h-4 w-4" />
             </span>
