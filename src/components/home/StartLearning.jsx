@@ -34,7 +34,7 @@ export default function StartLearning() {
             href="/neighborhood-preparedness"
             className="group bg-primary text-primary-foreground rounded-2xl p-8 hover:shadow-lg transition-all focus-ring"
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/15 text-secondary mb-5">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent/15 text-accent mb-5">
               <Users className="h-7 w-7" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Neighborhood Preparedness</h3>

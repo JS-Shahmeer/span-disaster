@@ -40,7 +40,7 @@ export default function MeetingNav({ currentSlug }) {
                 <div className="text-xs font-mono text-primary-foreground/60">Continue</div>
                 <div className="font-semibold">Explore Resources</div>
               </div>
-              <ArrowRight className="h-5 w-5 text-secondary shrink-0" />
+              <ArrowRight className="h-5 w-5 text-accent shrink-0" />
             </Link>
           )}
         </div>
