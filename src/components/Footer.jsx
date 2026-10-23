@@ -77,10 +77,10 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-primary-foreground/15 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-primary-foreground/50 font-mono">
+          <p className="text-xs text-primary-foreground/70 font-mono">
             © {new Date().getFullYear()} SPAN Disaster Services. 501(c)(3) nonprofit corporation.
           </p>
-          <p className="text-xs text-primary-foreground/50">
+          <p className="text-xs text-primary-foreground/70">
             Your Neighbors. Your Preparedness. Your First Response.
           </p>
         </div>
