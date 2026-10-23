@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Plus } from "lucide-react";
+import CartLink from "@/components/cart/CartLink";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -74,6 +75,7 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <CartLink />
             <Link
               href="/personal-preparedness"
               className="hidden sm:inline-flex items-center justify-center bg-secondary text-secondary-foreground px-4 py-2 rounded-md text-sm font-semibold hover:brightness-110 transition-all focus-ring"

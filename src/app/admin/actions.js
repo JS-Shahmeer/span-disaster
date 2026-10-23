@@ -179,3 +179,16 @@ export async function deleteMessage(id) {
   await prisma.contactMessage.delete({ where: { id } });
   revalidatePath("/admin", "layout");
 }
+
+// ---------- orders ----------
+
+const orderStatuses = ["paid", "fulfilled", "cancelled", "refunded"];
+
+export async function updateOrder(id, formData) {
+  await requireAdmin();
+  const status = String(formData.get("status") ?? "");
+  if (!orderStatuses.includes(status)) return;
+  const notes = String(formData.get("notes") ?? "").trim() || null;
+  await prisma.order.update({ where: { id }, data: { status, notes } });
+  revalidatePath("/admin", "layout");
+}

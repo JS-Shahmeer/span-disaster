@@ -1,5 +1,18 @@
 import Link from "next/link";
-import { Plus, Mail } from "lucide-react";
+import { Plus, Mail, Facebook, Instagram, Youtube, Linkedin, Twitter } from "lucide-react";
+import { siteConfig } from "@/config/site";
+
+const socialIcons = {
+  facebook: { icon: Facebook, label: "Facebook" },
+  instagram: { icon: Instagram, label: "Instagram" },
+  youtube: { icon: Youtube, label: "YouTube" },
+  linkedin: { icon: Linkedin, label: "LinkedIn" },
+  x: { icon: Twitter, label: "X" },
+};
+
+const socialLinks = Object.entries(siteConfig.social)
+  .filter(([key, url]) => url && socialIcons[key])
+  .map(([key, url]) => ({ url, ...socialIcons[key] }));
 
 const footerSections = [
   {
@@ -52,6 +65,23 @@ export default function Footer() {
               A 501(c)(3) nonprofit helping neighborhoods prepare, organize, and practice the skills
               needed to respond together during the critical first hour after a disaster.
             </p>
+            {socialLinks.length > 0 && (
+              <ul className="mt-5 flex items-center gap-3" aria-label="SPAN on social media">
+                {socialLinks.map(({ url, icon: Icon, label }) => (
+                  <li key={label}>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground/80 hover:bg-primary-foreground/20 hover:text-primary-foreground transition-colors focus-ring"
+                    >
+                      <Icon className="h-4 w-4" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Link sections */}

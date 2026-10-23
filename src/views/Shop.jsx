@@ -2,11 +2,12 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { BookOpen, Package, FileText, ShieldCheck, ShoppingCart, Download, ArrowRight } from "lucide-react";
+import { BookOpen, Package, FileText, ShieldCheck, Download, ArrowRight } from "lucide-react";
 import SectionHeading from "@/components/shared/SectionHeading";
 import CTASection from "@/components/shared/CTASection";
 import { productCategories } from "@/data/products";
 import { Image } from "@/components/ui/image";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 
 const workbookImage = "https://media.base44.com/images/public/6acfc11b88787a633a2cb9f6/8f3366411_generated_8e7872c5.png";
 
@@ -74,15 +75,12 @@ export default function Shop({ products }) {
                 <span className="text-lg font-semibold text-primary">{featured.priceNote}</span>
                 <span className="text-sm text-muted-foreground">· {featured.format} · {featured.delivery}</span>
               </div>
-              <button
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md text-base font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[48px]"
-                disabled
-              >
-                <ShoppingCart className="h-5 w-5" />
-                Add to Cart
-              </button>
+              <AddToCartButton
+                product={featured}
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md text-base font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[48px] disabled:opacity-60"
+              />
               <p className="mt-3 text-xs text-muted-foreground italic">
-                Checkout functionality will be enabled when the commerce integration is configured.
+                {featured.price > 0 ? "Secure checkout powered by Stripe." : "This product will be available to order soon."}
               </p>
               <Link
                 href={`/shop/${featured.slug}`}
@@ -154,21 +152,18 @@ export default function Shop({ products }) {
                       <span className="font-semibold text-primary">{p.priceNote}</span>
                       <span className="text-xs text-muted-foreground">{p.format}</span>
                     </div>
-                    <button
-                      className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[44px]"
-                      disabled
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                      {p.price === 0 ? "Download Free" : "Add to Cart"}
-                    </button>
+                    <AddToCartButton
+                      product={p}
+                      iconClassName="h-4 w-4"
+                      className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[44px] disabled:opacity-60"
+                    />
                   </div>
                 </div>
               </Link>
             ))}
           </div>
           <p className="mt-8 text-sm text-muted-foreground italic">
-            Prices, inventory, and shipping details will be confirmed when products are finalized.
-            Do not treat placeholder prices as final.
+            Shipping and tax are calculated at checkout. Items marked &ldquo;Coming Soon&rdquo; will be available to order once pricing is confirmed.
           </p>
         </div>
       </section>

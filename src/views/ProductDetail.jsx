@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, ShoppingCart, Check, Package, BookOpen, Download, ArrowRight } from "lucide-react";
+import AddToCartButton from "@/components/cart/AddToCartButton";
+import { ArrowLeft, Check, Package, BookOpen, Download, ArrowRight } from "lucide-react";
 
 const categoryIcons = {
   workbook: BookOpen,
@@ -70,17 +71,16 @@ export default function ProductDetail({ product, resources }) {
                 </span>
               </div>
 
-              <button
+              <AddToCartButton
+                product={product}
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md text-base font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[48px] disabled:opacity-60"
-                disabled
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {isFree ? "Download Free" : "Add to Cart"}
-              </button>
+              />
               <p className="mt-3 text-xs text-muted-foreground italic">
                 {isFree
-                  ? "Download links will be activated as official materials become available."
-                  : "Checkout functionality will be enabled when the commerce integration is configured."}
+                  ? "Free materials are available in the Resource Library."
+                  : product.price > 0
+                    ? "Secure checkout powered by Stripe."
+                    : "This product will be available to order soon."}
               </p>
             </div>
           </div>
