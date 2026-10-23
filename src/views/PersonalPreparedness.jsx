@@ -19,7 +19,7 @@ function ActivityCard({ activity }) {
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
           <Icon className="h-6 w-6" />
         </div>
-        <span className="font-mono text-sm font-semibold text-border">
+        <span aria-hidden="true" className="font-mono text-sm font-semibold text-border">
           {String(activity.id).padStart(2, "0")}
         </span>
       </div>
