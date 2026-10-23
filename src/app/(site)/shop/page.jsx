@@ -1,10 +1,13 @@
 import Shop from "@/views/Shop";
+import { getProducts } from "@/lib/content";
+
+export const revalidate = 300;
 
 export const metadata = {
   title: "Shop",
   description: "SPAN workbooks, preparedness products, and educational materials.",
 };
 
-export default function Page() {
-  return <Shop />;
+export default async function Page() {
+  return <Shop products={await getProducts()} />;
 }

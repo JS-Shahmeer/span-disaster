@@ -18,9 +18,26 @@ Next.js site for SPAN Disaster Services, built by Optimal IT Solutions.
 ## Development
 
 ```bash
+cp .env.example .env     # fill in DATABASE_URL, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
 npm install
-npm run dev     # http://localhost:3000
-npm run build
+npm run db:migrate       # create tables
+npm run db:seed          # load launch content and create the first admin
+npm run dev              # http://localhost:3000
 ```
+
+Without `DATABASE_URL` the public site still builds and renders from the bundled
+content in `src/data`; the contact form and admin need a database.
+
+## Backend
+
+- **Database:** Postgres through Prisma (`prisma/schema.prisma`). Products, resources,
+  contact messages and admin users live in the database. Activities, meetings and
+  milestones stay in `src/data` as page content.
+- **Admin:** `/admin` (sign in with an `AdminUser`). Read contact messages, and create,
+  edit, hide or delete products and resources. Saving revalidates the public pages.
+- **Uploads:** resource files and product images upload to Vercel Blob when
+  `BLOB_READ_WRITE_TOKEN` is set (4 MB limit); otherwise paste a file URL.
+- **Deploys:** Vercel runs `npm run vercel-build`, which applies pending migrations
+  when `DATABASE_URL` is set, then builds.
 
 Set `NEXT_PUBLIC_SITE_URL` to the production URL so metadata links resolve.

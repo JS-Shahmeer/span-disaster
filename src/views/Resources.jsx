@@ -5,7 +5,7 @@ import { Download, FileText, Image as ImageIcon, Video, BookOpen, Search, PlayCi
 import SectionHeading from "@/components/shared/SectionHeading";
 import CTASection from "@/components/shared/CTASection";
 import VideoModal from "@/components/resources/VideoModal";
-import { resources, resourceTypes } from "@/data/resources";
+import { resourceTypes } from "@/data/resources";
 
 const typeIcons = {
   handout: FileText,
@@ -17,7 +17,7 @@ const typeIcons = {
 
 const categories = ["All", "Personal Preparedness", "Neighborhood Preparedness", "Video Resources", "About SPAN"];
 
-export default function Resources() {
+export default function Resources({ resources }) {
   const [category, setCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [videoResource, setVideoResource] = useState(null);
@@ -30,7 +30,7 @@ export default function Resources() {
         r.description.toLowerCase().includes(search.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [category, search]);
+  }, [category, search, resources]);
 
   return (
     <>
@@ -124,6 +124,16 @@ export default function Resources() {
                             <Video className="h-4 w-4" />
                             Watch Video
                           </button>
+                        ) : r.fileUrl ? (
+                          <a
+                            href={r.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all"
+                          >
+                            <Download className="h-4 w-4" />
+                            Download
+                          </a>
                         ) : (
                           <button
                             className="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all"
