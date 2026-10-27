@@ -5,7 +5,7 @@ import Link from "next/link";
 import { BookOpen, Package, FileText, ShieldCheck, ShoppingCart, Download, ArrowRight } from "lucide-react";
 import SectionHeading from "@/components/shared/SectionHeading";
 import CTASection from "@/components/shared/CTASection";
-import { products, productCategories, getProductsByCategory } from "@/data/products";
+import { productCategories } from "@/data/products";
 import { Image } from "@/components/ui/image";
 
 const workbookImage = "https://media.base44.com/images/public/6acfc11b88787a633a2cb9f6/8f3366411_generated_8e7872c5.png";
@@ -17,15 +17,16 @@ const categoryIcons = {
   free: Download,
 };
 
-export default function Shop() {
+export default function Shop({ products }) {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filtered = useMemo(() => {
     if (activeCategory === "all") return products.filter((p) => p.category !== "free");
-    return getProductsByCategory(activeCategory);
-  }, [activeCategory]);
+    return products.filter((p) => p.category === activeCategory);
+  }, [activeCategory, products]);
 
   const freeProducts = products.filter((p) => p.category === "free");
+  const featured = products.find((p) => p.category === "workbook") ?? products[0];
 
   return (
     <>
@@ -40,6 +41,7 @@ export default function Shop() {
       </section>
 
       {/* Featured workbook */}
+      {featured && (
       <section className="bg-card border-b border-border">
         <div className="container-span py-16">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -58,10 +60,10 @@ export default function Shop() {
               </div>
               <h2 className="text-3xl font-semibold text-primary mb-3">The SPAN Workbook</h2>
               <p className="text-muted-foreground leading-relaxed mb-5">
-                {products[0].description}
+                {featured.description}
               </p>
               <ul className="space-y-2 mb-6">
-                {products[0].features.map((f) => (
+                {featured.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
                     <span className="text-secondary mt-0.5">✓</span>
                     {f}
@@ -69,8 +71,8 @@ export default function Shop() {
                 ))}
               </ul>
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-lg font-semibold text-primary">{products[0].priceNote}</span>
-                <span className="text-sm text-muted-foreground">· {products[0].format} · {products[0].delivery}</span>
+                <span className="text-lg font-semibold text-primary">{featured.priceNote}</span>
+                <span className="text-sm text-muted-foreground">· {featured.format} · {featured.delivery}</span>
               </div>
               <button
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md text-base font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[48px]"
@@ -83,7 +85,7 @@ export default function Shop() {
                 Checkout functionality will be enabled when the commerce integration is configured.
               </p>
               <Link
-                href={`/shop/${products[0].slug}`}
+                href={`/shop/${featured.slug}`}
                 className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all"
               >
                 View full details
@@ -93,6 +95,7 @@ export default function Shop() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Category filter + products */}
       <section className="bg-background">

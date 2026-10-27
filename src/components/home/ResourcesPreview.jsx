@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Download, ArrowRight, FileText, Video, Image as ImageIcon } from "lucide-react";
 import SectionHeading from "@/components/shared/SectionHeading";
-import { resources } from "@/data/resources";
 
 const typeIcons = {
   handout: FileText,
@@ -10,7 +9,7 @@ const typeIcons = {
   video: Video,
 };
 
-export default function ResourcesPreview() {
+export default function ResourcesPreview({ resources }) {
   const featured = resources.filter((r) => r.type !== "video").slice(0, 3);
 
   return (
@@ -43,10 +42,22 @@ export default function ResourcesPreview() {
                 </div>
                 <h3 className="text-base font-semibold text-primary mb-1.5">{r.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">{r.description}</p>
-                <button className="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all" disabled>
-                  <Download className="h-4 w-4" />
-                  Download
-                </button>
+                {r.fileUrl ? (
+                  <a
+                    href={r.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download
+                  </a>
+                ) : (
+                  <button className="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all" disabled>
+                    <Download className="h-4 w-4" />
+                    Download
+                  </button>
+                )}
               </div>
             );
           })}

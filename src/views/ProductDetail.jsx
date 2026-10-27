@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { ArrowLeft, ShoppingCart, Check, Package, BookOpen, Download, ArrowRight } from "lucide-react";
-import { products, getProductBySlug } from "@/data/products";
-import { resources } from "@/data/resources";
 
 const categoryIcons = {
   workbook: BookOpen,
@@ -10,8 +8,7 @@ const categoryIcons = {
   free: Download,
 };
 
-export default function ProductDetail({ slug }) {
-  const product = getProductBySlug(slug);
+export default function ProductDetail({ product, resources }) {
 
   if (!product) return null;
 

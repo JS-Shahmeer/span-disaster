@@ -9,7 +9,7 @@ import ResourcesPreview from "@/components/home/ResourcesPreview";
 import StorePreview from "@/components/home/StorePreview";
 import CTASection from "@/components/shared/CTASection";
 
-export default function Home() {
+export default function Home({ resources }) {
   return (
     <>
       <Hero />
@@ -19,7 +19,7 @@ export default function Home() {
       <NeighborhoodProcess />
       <Experience />
       <StartLearning />
-      <ResourcesPreview />
+      <ResourcesPreview resources={resources} />
       <StorePreview />
       <CTASection
         title="Preparedness works best when we practice together."
