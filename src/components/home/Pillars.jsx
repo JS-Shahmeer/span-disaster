@@ -34,7 +34,7 @@ export default function Pillars() {
               key={pillar.title}
               className="relative bg-card rounded-xl p-7 border border-border hover:border-secondary/40 transition-colors"
             >
-              <div className="absolute top-7 right-7 font-mono text-sm text-border font-semibold">
+              <div aria-hidden="true" className="absolute top-7 right-7 font-mono text-sm text-border font-semibold">
                 0{i + 1}
               </div>
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 text-secondary mb-5">

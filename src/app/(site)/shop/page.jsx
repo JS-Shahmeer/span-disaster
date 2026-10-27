@@ -6,6 +6,7 @@ export const revalidate = 300;
 export const metadata = {
   title: "Shop",
   description: "SPAN workbooks, preparedness products, and educational materials.",
+  alternates: { canonical: "/shop" },
 };
 
 export default async function Page() {
