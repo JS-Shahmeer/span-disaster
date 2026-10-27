@@ -20,44 +20,42 @@ export default function NeighborhoodProcess() {
           description="Each meeting builds on the last, moving from learning to discussion to practice. Together they create a neighborhood that knows what to do."
         />
         <div className="mt-12 relative">
-          {/* Vertical line */}
-          <div className="absolute left-[27px] sm:left-1/2 top-0 bottom-0 w-px bg-border sm:-translate-x-1/2" />
-          <div className="space-y-8">
-            {stages.map((stage, i) => (
-              <Link
-                key={stage.num}
-                href={stage.to}
-                className={`relative flex items-start gap-6 sm:gap-0 group focus-ring rounded-lg ${i % 2 === 0 ? "sm:flex-row" : "sm:flex-row-reverse"}`}
-              >
-                <div className="flex-1 sm:pr-8 sm:text-right hidden sm:block">
-                  {i % 2 === 0 && <StageContent stage={stage} align="right" />}
-                </div>
-                <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-mono font-semibold text-sm border-4 border-background">
-                  {stage.num}
-                </div>
-                <div className="flex-1 sm:pl-8">
-                  <div className="sm:hidden">
-                    <StageContent stage={stage} />
-                  </div>
-                  {i % 2 === 1 && <div className="hidden sm:block"><StageContent stage={stage} /></div>}
-                </div>
-              </Link>
-            ))}
-          </div>
+          {/* Vertical line: through the badges on mobile, down the center on desktop */}
+          <div className="absolute left-7 sm:left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2" aria-hidden="true" />
+          <ol className="space-y-8 sm:space-y-6">
+            {stages.map((stage, i) => {
+              const onLeft = i % 2 === 0;
+              return (
+                <li key={stage.num}>
+                  <Link
+                    href={stage.to}
+                    className="relative grid grid-cols-[3.5rem_1fr] items-start gap-5 sm:grid-cols-[1fr_3.5rem_1fr] sm:gap-8 group focus-ring rounded-lg"
+                  >
+                    <div className="relative z-10 row-start-1 col-start-1 sm:col-start-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground font-mono font-semibold text-sm border-4 border-background">
+                      {stage.num}
+                    </div>
+                    <div className={`row-start-1 col-start-2 pt-2 ${onLeft ? "sm:col-start-1 sm:text-right" : "sm:col-start-3"}`}>
+                      <StageContent stage={stage} />
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </div>
     </section>
   );
 }
 
-function StageContent({ stage, align }) {
+function StageContent({ stage }) {
   return (
-    <div className="group-hover:translate-x-0.5 transition-transform">
+    <div>
       <h3 className="text-lg font-semibold text-primary mb-1">{stage.title}</h3>
       <p className="text-muted-foreground leading-relaxed text-sm mb-2">{stage.description}</p>
-      <span className={`inline-flex items-center gap-1 text-xs font-medium text-secondary ${align === "right" ? "sm:flex-row-reverse" : ""}`}>
+      <span className="inline-flex items-center gap-1 text-xs font-medium text-secondary">
         View meeting
-        <ArrowRight className="h-3 w-3" />
+        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
       </span>
     </div>
   );
