@@ -4,7 +4,6 @@ import JsonLd from "@/components/JsonLd";
 import { getProductBySlug, getProducts, getResources } from "@/lib/content";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 
-export const revalidate = 300;
 
 export async function generateStaticParams() {
   return (await getProducts()).map((p) => ({ slug: p.slug }));

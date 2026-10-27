@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
-import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
-import { recordCheckoutSession } from "@/lib/orders";
+import { getPaidOrder } from "@/lib/orders";
 import { formatMoney } from "@/lib/email";
 import ClearCart from "@/components/cart/ClearCart";
 
@@ -12,9 +11,8 @@ export const dynamic = "force-dynamic";
 export default async function Page({ searchParams }) {
   const { session_id: sessionId } = await searchParams;
   let order = null;
-  if (stripe && prisma && typeof sessionId === "string" && sessionId.startsWith("cs_")) {
-    // The webhook normally records the order first; this covers a slow webhook.
-    order = (await recordCheckoutSession(sessionId).catch(() => null))?.order ?? null;
+  if (stripe && typeof sessionId === "string" && sessionId.startsWith("cs_")) {
+    order = await getPaidOrder(sessionId).catch(() => null);
   }
 
   return (
@@ -31,7 +29,7 @@ export default async function Page({ searchParams }) {
             : "Your payment is being processed. You'll receive a confirmation email shortly."}
         </p>
         {order && (
-          <p className="mt-2 text-sm font-mono text-muted-foreground">Order reference {order.id.slice(-8).toUpperCase()}</p>
+          <p className="mt-2 text-sm font-mono text-muted-foreground">Order reference {order.ref}</p>
         )}
         <Link href="/personal-preparedness" className="mt-8 inline-flex items-center justify-center bg-primary text-primary-foreground px-6 py-3 rounded-md text-base font-semibold hover:bg-primary/90 transition-all focus-ring min-h-[48px]">
           Keep preparing

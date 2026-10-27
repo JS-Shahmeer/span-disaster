@@ -18,45 +18,35 @@ Next.js site for SPAN Disaster Services, built by Optimal IT Solutions.
 ## Development
 
 ```bash
-cp .env.example .env     # fill in DATABASE_URL, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+cp .env.example .env     # Stripe and Resend keys are optional locally
 npm install
-npm run db:migrate       # create tables
-npm run db:seed          # load launch content and create the first admin
 npm run dev              # http://localhost:3000
 ```
 
-Without `DATABASE_URL` the public site still builds and renders from the bundled
-content in `src/data`; the contact form and admin need a database.
+## Content
 
-## Backend
-
-- **Database:** Postgres through Prisma (`prisma/schema.prisma`). Products, resources,
-  contact messages and admin users live in the database. Activities, meetings and
-  milestones stay in `src/data` as page content.
-- **Admin:** `/admin` (sign in with an `AdminUser`). Read contact messages, and create,
-  edit, hide or delete products and resources. Saving revalidates the public pages.
-- **Uploads:** resource files and product images upload to Vercel Blob when
-  `BLOB_READ_WRITE_TOKEN` is set (4 MB limit); otherwise paste a file URL.
-- **Deploys:** Vercel runs `npm run vercel-build`, which applies pending migrations
-  when `DATABASE_URL` is set, then builds.
+There is no database or admin panel. Products and resources are edited in
+`src/data/products.js` and `src/data/resources.js` (files go in `/public`), then
+committed and deployed. Orders live in the Stripe dashboard.
 
 ## Store
 
-- Cart lives in the browser (`localStorage`); checkout re-prices every line from the
-  database and redirects to Stripe Checkout. Products with no price show "Coming Soon".
-- `POST /api/stripe/webhook` records paid sessions as `Order`s (idempotent) and marks
-  refunds. In Stripe, add a webhook for `checkout.session.completed`,
-  `checkout.session.async_payment_succeeded` and `charge.refunded`.
+- Cart lives in the browser (`localStorage`); checkout re-prices every line from
+  `src/data/products.js` and redirects to Stripe Checkout. Products with no price show "Coming Soon".
+- `POST /api/stripe/webhook` emails the order to `NOTIFY_EMAIL` and a confirmation to
+  the customer. In Stripe, add a webhook for `checkout.session.completed` and
+  `checkout.session.async_payment_succeeded`.
 - Shipping: set `STRIPE_SHIPPING_RATE_ID` to a Shipping Rate from the Stripe dashboard.
   Tax: set `STRIPE_AUTOMATIC_TAX=true` once Stripe Tax is set up.
-- Orders show in `/admin/orders`, where they can be marked fulfilled with notes.
+- Orders, refunds and customer details are managed in the Stripe dashboard (Payments).
 - Local testing: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
 
 ## Email
 
 Contact messages and paid orders send notifications through Resend when
 `RESEND_API_KEY`, `EMAIL_FROM` and `NOTIFY_EMAIL` are set; customers also get an order
-confirmation. Without them, emails are skipped and everything else still works.
+confirmation. The contact form needs these to deliver messages; without them it asks
+visitors to email instead.
 
 ## Social links
 

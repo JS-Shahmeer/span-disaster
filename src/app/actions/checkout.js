@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { products } from "@/data/products";
 import { stripe, shippingCountries } from "@/lib/stripe";
 
 const cartSchema = z
@@ -17,17 +17,14 @@ async function siteOrigin() {
 }
 
 export async function createCheckoutSession(cart) {
-  if (!stripe || !prisma) return { error: "Checkout isn't available yet. Please contact us to order." };
+  if (!stripe) return { error: "Checkout isn't available yet. Please contact us to order." };
 
   const parsed = cartSchema.safeParse(cart);
   if (!parsed.success) return { error: "Your cart looks invalid. Please refresh and try again." };
 
-  // Prices always come from the database, never from the browser.
-  const products = await prisma.product.findMany({
-    where: { slug: { in: parsed.data.map((i) => i.slug) }, published: true },
-  });
+  // Prices always come from src/data, never from the browser.
   const bySlug = new Map(products.map((p) => [p.slug, p]));
-  const lines = parsed.data.filter((i) => bySlug.get(i.slug)?.priceCents > 0);
+  const lines = parsed.data.filter((i) => bySlug.get(i.slug)?.price > 0);
   if (lines.length !== parsed.data.length) {
     return { error: "Some items are no longer available. Please review your cart.", unavailable: parsed.data.filter((i) => !lines.includes(i)).map((i) => i.slug) };
   }
@@ -42,8 +39,8 @@ export async function createCheckoutSession(cart) {
           quantity: i.quantity,
           price_data: {
             currency: "usd",
-            unit_amount: p.priceCents,
-            product_data: { name: p.name, metadata: { productId: p.id, slug: p.slug } },
+            unit_amount: Math.round(p.price * 100),
+            product_data: { name: p.name, metadata: { slug: p.slug } },
           },
         };
       }),
