@@ -1,57 +1,39 @@
 import "server-only";
-import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { formatMoney, sendEmail } from "@/lib/email";
 
-// Records a paid Checkout Session as an Order. Idempotent: Stripe may deliver the
-// same event more than once, and the success page may race the webhook.
-export async function recordCheckoutSession(sessionId) {
-  const existing = await prisma.order.findUnique({ where: { stripeSessionId: sessionId }, include: { items: true } });
-  if (existing) return { order: existing, created: false };
-
-  const session = await stripe.checkout.sessions.retrieve(sessionId, { expand: ["line_items.data.price.product"] });
-  if (session.payment_status !== "paid") return { order: null, created: false };
+// Orders live in Stripe (Dashboard > Payments); there is no database. This turns a
+// paid Checkout Session into a plain order object for emails and the success page.
+export async function getPaidOrder(sessionId) {
+  const session = await stripe.checkout.sessions.retrieve(sessionId, { expand: ["line_items"] });
+  if (session.payment_status !== "paid") return null;
 
   const shipping = session.collected_information?.shipping_details ?? session.shipping_details ?? null;
   const customer = session.customer_details ?? {};
-  const items = session.line_items.data.map((li) => {
-    const product = li.price?.product;
-    return {
-      productId: product?.metadata?.productId ?? null,
-      slug: product?.metadata?.slug ?? "",
-      name: li.description ?? product?.name ?? "Item",
+  return {
+    ref: session.id.slice(-8).toUpperCase(),
+    email: customer.email ?? "",
+    name: shipping?.name ?? customer.name ?? null,
+    phone: customer.phone ?? null,
+    currency: session.currency ?? "usd",
+    amountSubtotal: session.amount_subtotal ?? 0,
+    amountShipping: session.total_details?.amount_shipping ?? 0,
+    amountTax: session.total_details?.amount_tax ?? 0,
+    amountTotal: session.amount_total ?? 0,
+    shippingAddress: shipping?.address ?? null,
+    items: session.line_items.data.map((li) => ({
+      name: li.description ?? "Item",
       unitAmount: li.price?.unit_amount ?? Math.round(li.amount_subtotal / li.quantity),
       quantity: li.quantity,
-    };
-  });
+    })),
+  };
+}
 
-  try {
-    const order = await prisma.order.create({
-      data: {
-        stripeSessionId: session.id,
-        stripePaymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id,
-        email: customer.email ?? "",
-        name: shipping?.name ?? customer.name ?? null,
-        phone: customer.phone ?? null,
-        currency: session.currency ?? "usd",
-        amountSubtotal: session.amount_subtotal ?? 0,
-        amountShipping: session.total_details?.amount_shipping ?? 0,
-        amountTax: session.total_details?.amount_tax ?? 0,
-        amountTotal: session.amount_total ?? 0,
-        shippingAddress: shipping?.address ?? undefined,
-        items: { create: items },
-      },
-      include: { items: true },
-    });
-    await notifyOrder(order);
-    return { order, created: true };
-  } catch (error) {
-    // Unique violation: another request recorded it first.
-    if (error?.code === "P2002") {
-      return { order: await prisma.order.findUnique({ where: { stripeSessionId: sessionId }, include: { items: true } }), created: false };
-    }
-    throw error;
-  }
+// Called from the webhook only, so each paid order is emailed once (Stripe retries
+// only when the webhook fails).
+export async function handlePaidSession(sessionId) {
+  const order = await getPaidOrder(sessionId);
+  if (order) await notifyOrder(order);
 }
 
 function orderSummary(order) {
@@ -71,7 +53,7 @@ function orderSummary(order) {
 }
 
 async function notifyOrder(order) {
-  const ref = order.id.slice(-8).toUpperCase();
+  const { ref } = order;
   await Promise.all([
     sendEmail({
       to: process.env.NOTIFY_EMAIL,

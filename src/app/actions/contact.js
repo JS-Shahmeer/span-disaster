@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 
 const schema = z.object({
@@ -19,21 +18,13 @@ export async function submitContact(input) {
     if (parsed.error.issues.some((i) => i.path[0] === "company")) return { ok: true };
     return { ok: false, error: "Please check the form and try again." };
   }
-  if (!prisma) {
-    return { ok: false, error: "Messages can't be sent right now. Please email us instead." };
-  }
   const { company: _honeypot, ...data } = parsed.data;
-  try {
-    await prisma.contactMessage.create({ data });
-  } catch (error) {
-    console.error("submitContact failed", error);
-    return { ok: false, error: "Something went wrong sending your message. Please try again." };
-  }
-  await sendEmail({
+  const sent = await sendEmail({
     to: process.env.NOTIFY_EMAIL,
     replyTo: data.email,
     subject: `New contact message: ${data.inquiryType}`,
     text: `From: ${data.name} <${data.email}>\nType: ${data.inquiryType}\n\n${data.message}`,
   });
+  if (!sent) return { ok: false, error: "Messages can't be sent right now. Please email us instead." };
   return { ok: true };
 }
